@@ -1,14 +1,21 @@
-import FilterView from './view/filter-view.js';
-import PriceView from './view/route-price-view.js';
-import {render, RenderPosition} from './render.js';
-import MainPresenter from './presenter/main-presenter.js';
+import EventsListPresenter from './presenter/main-presenter.js';
+import TripInfoView from './view/trip-info.js';
+import FiltersView from './view/filters.js';
+import SortingView from './view/sorting.js';
+import PointsModel from './model/response-model.js';
 
-const siteMainElement = document.querySelector('.trip-events');
-const siteHeaderElement = document.querySelector('.trip-controls__filters');
-const siteHeaderPriceElement = document.querySelector('.trip-main');
-const boardPresenter = new MainPresenter({boardContainer: siteMainElement});
+import { render, RenderPosition } from './render.js';
 
-render(new PriceView(), siteHeaderPriceElement, RenderPosition.AFTERBEGIN);
-render(new FilterView(), siteHeaderElement);
+const tripMainElement = document.querySelector('.trip-main');
+const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
+const tripEventsSectionElement = document.querySelector('.trip-events');
+const pointsModel = new PointsModel();
+const eventsListPresenter = new EventsListPresenter({
+  eventsListContainer: tripEventsSectionElement,
+  pointsModel,
+});
 
-boardPresenter.init();
+render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
+render(new FiltersView(), tripFiltersElement);
+render(new SortingView(), tripEventsSectionElement);
+eventsListPresenter.init();

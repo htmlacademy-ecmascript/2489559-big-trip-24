@@ -1,12 +1,10 @@
-import { createElement } from '../render';
+import { createElement } from '../render.js';
 
-function createEditFormTemplate() {
-  return '<section class="trip-events"></section>';
-}
+const createEventsListTemplate = () => '<ul class="trip-events__list"></ul>';
 
-export default class EditView {
+export default class EventsList {
   getTemplate() {
-    return createEditFormTemplate();
+    return createEventsListTemplate();
   }
 
   getElement() {
