@@ -1,27 +1,36 @@
-import EditView from '../view/edit-form.js';
-import SortView from '../view/sort-view.js';
-import RoutePointListView from '../view/route-point-list-view.js';
-import PointView from '../view/point-view.js';
-import PointEditFormView from '../view/route-edit-form-view.js';
+import EventsList from '../view/events-list.js';
+import EventsPoint from '../view/events-point.js';
+import EditorPoint from '../view/editor-point.js';
 
 import {render} from '../render.js';
 
-export default class MainPresenter {
-  boardComponent = new EditView();
-  routePointListComponent = new RoutePointListView();
+export default class EventsListPresenter {
+  eventsListComponent = new EventsList();
 
-  constructor({boardContainer}) {
-    this.boardContainer = boardContainer;
+  constructor({eventsListContainer, pointsModel}) {
+    this.eventsListContainer = eventsListContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
-    render(this.boardComponent, this.boardContainer);
-    render(new SortView(), this.boardComponent.getElement());
-    render(this.routePointListComponent, this.boardComponent.getElement());
-    render(new PointEditFormView(), this.routePointListComponent.getElement());
-    for (let i = 0; i < 3; i++) {
-      render(new PointView(), this.routePointListComponent.getElement());
-    }
+    this.eventsListPoints = [...this.pointsModel.getPoints()];
 
+    render(this.eventsListComponent, this.eventsListContainer);
+    const editorPoint = new EditorPoint({
+      point: this.eventsListPoints[0],
+      allOffers: this.pointsModel.getOffersByType(this.eventsListPoints[0].type),
+      pointDestination: this.pointsModel.getDestinationsById(this.eventsListPoints[0].destination),
+      allDestination: this.pointsModel.getDestinations()
+    });
+    render(editorPoint, this.eventsListComponent.getElement());
+
+    for (let i = 1; i < this.eventsListPoints.length; i++) {
+      const point = new EventsPoint({
+        point: this.eventsListPoints[i],
+        offers: [...this.pointsModel.getOffersById(this.eventsListPoints[i].type, this.eventsListPoints[i].offers)],
+        destination: this.pointsModel.getDestinationsById(this.eventsListPoints[i].destination)
+      });
+      render(point, this.eventsListComponent.getElement());
+    }
   }
 }
