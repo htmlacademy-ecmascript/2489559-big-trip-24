@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { createOfferItemTemplate, createTypeGroupTemplate, createImageSection } from './editor-form-elements.js';
 import { GROUP_TYPES, DESTINATIONS, AVAILABLE_OFFERS } from '../utils-constants/constants.js';
 
@@ -70,20 +70,8 @@ const createNewPointTemplate = () => `
   </li>
 `;
 
-export default class NewPoint {
-  getTemplate() {
+export default class NewPoint extends AbstractView {
+  get template() {
     return createNewPointTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

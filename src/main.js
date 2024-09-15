@@ -1,10 +1,9 @@
-import EventsListPresenter from './presenter/main-presenter.js';
-import TripInfoView from './view/trip-info.js';
-import FiltersView from './view/filters.js';
-import SortingView from './view/sorting.js';
+import EventsListPresenter from './presenter/events-list-presenter.js';
+import TripInfo from './view/trip-info.js';
+import Filters from './view/filters.js';
 import PointsModel from './model/response-model.js';
 
-import { render, RenderPosition } from './render.js';
+import { render, RenderPosition } from './framework/render.js';
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
@@ -15,7 +14,7 @@ const eventsListPresenter = new EventsListPresenter({
   pointsModel,
 });
 
-render(new TripInfoView(), tripMainElement, RenderPosition.AFTERBEGIN);
-render(new FiltersView(), tripFiltersElement);
-render(new SortingView(), tripEventsSectionElement);
+render(new TripInfo(), tripMainElement, RenderPosition.AFTERBEGIN);
+render(new Filters(), tripFiltersElement);
+
 eventsListPresenter.init();

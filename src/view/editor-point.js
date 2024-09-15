@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { createOfferItemTemplate, createTypeGroupTemplate } from './editor-form-elements.js';
 import { GROUP_TYPES } from '../utils-constants/constants.js';
 
@@ -91,27 +91,42 @@ const createEditorPointTemplate = (point, allOffers, pointDestination, allDestin
   );
 };
 
-export default class EditorPoint {
-  constructor({point, allOffers, pointDestination, allDestination}) {
-    this.point = point;
-    this.allOffers = allOffers;
-    this.pointDestination = pointDestination;
-    this.allDestination = allDestination;
+export default class EditorPoint extends AbstractView {
+  #point = null;
+  #allOffers = null;
+  #pointDestination = null;
+  #allDestinations = [];
+
+  #handleFormSubmit = null;
+  #handleEditRollUp = null;
+
+  constructor({point, allOffers, pointDestination, allDestinations, onFormSubmit, onEditRollUp}) {
+    super();
+    this.#point = point;
+    this.#allOffers = allOffers;
+    this.#pointDestination = pointDestination;
+    this.#allDestinations = allDestinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleEditRollUp = onEditRollUp;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editRollUpHandler);
   }
 
-  getTemplate() {
-    return createEditorPointTemplate(this.point, this.allOffers, this.pointDestination, this.allDestination);
+  get template() {
+    return createEditorPointTemplate(this.#point, this.#allOffers, this.#pointDestination, this.#allDestinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editRollUpHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditRollUp();
+  };
 }
