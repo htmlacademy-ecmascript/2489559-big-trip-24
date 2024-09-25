@@ -2,8 +2,10 @@ import EventsList from '../view/events-list.js';
 import EventsPoint from '../view/events-point.js';
 import EditorPoint from '../view/editor-point.js';
 import Sorting from '../view/sorting.js';
+import Plug from '../view/plug.js';
 
 import { render, replace } from '../framework/render.js';
+import { PlugText } from '../utils-constants/constants.js';
 
 export default class EventsListPresenter {
   #eventsListContainer = null;
@@ -11,6 +13,7 @@ export default class EventsListPresenter {
 
   #eventsListComponent = new EventsList();
   #sorting = new Sorting();
+  #listEmpty = new Plug(PlugText.EVERYTHING);
 
   #eventsListPoints = [];
 
@@ -21,13 +24,7 @@ export default class EventsListPresenter {
 
   init() {
     this.#eventsListPoints = [...this.#pointsModel.points];
-
-    render(this.#sorting, this.#eventsListContainer);
-    render(this.#eventsListComponent, this.#eventsListContainer);
-
-    for (let i = 0; i < this.#eventsListPoints.length; i++) {
-      this.#renderPoint(this.#eventsListPoints[i]);
-    }
+    this.#renderIvents();
   }
 
   #renderPoint(point) {
@@ -73,5 +70,17 @@ export default class EventsListPresenter {
       replace(pointComponent, pointEditComponent);
     }
     render(pointComponent, this.#eventsListComponent.element);
+  }
+
+  #renderIvents() {
+    render(this.#sorting, this.#eventsListContainer);
+    render(this.#eventsListComponent, this.#eventsListContainer);
+    if (this.#eventsListPoints.length === 0) {
+      render (this.#listEmpty, this.#eventsListContainer);
+      return;
+    }
+    for (let i = 0; i < this.#eventsListPoints.length; i++) {
+      this.#renderPoint(this.#eventsListPoints[i]);
+    }
   }
 }
