@@ -1,4 +1,4 @@
-import { getRandomArrayElement } from '../utils-constants/utils.js';
+import { getRandomElements } from '../utils-constants/utils';
 
 const mockPoints = [
   {
@@ -314,6 +314,6 @@ const mockPoints = [
   }
 ];
 
-const getRandomPoint = () => getRandomArrayElement(mockPoints);
+const getRandomPoints = getRandomElements(mockPoints);
 
-export { getRandomPoint };
+export { getRandomPoints };

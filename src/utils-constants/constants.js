@@ -1,9 +1,19 @@
 const GROUP_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
-const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix'];
-const FILTER_TYPES = ['Everything', 'Future', 'Present', 'Past'];
-const SORT_TYPES = ['Day', 'Event', 'Time', 'Price', 'Offers'];
 
 const ID_IMAGES = [1, 2, 3, 4, 5];
+
+const SortType = {
+  DAY: 'Day',
+  EVENT: 'Event',
+  TIME: 'Time',
+  PRICE: 'Price',
+  OFFERS: 'Offers'
+};
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
 const PlugText = {
   EVERYTHING: 'Click New Event to create your first point',
@@ -21,4 +31,4 @@ const FilterType = {
   FUTURE: 'Future',
 };
 
-export { GROUP_TYPES, DESTINATIONS, FILTER_TYPES, SORT_TYPES, ID_IMAGES, PlugText, FilterType};
+export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode};
