@@ -4,7 +4,7 @@ import Sorting from '../view/sorting.js';
 import { SortType, PlugText } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils-constants/utils.js';
-import { sortByPrice, sortByTime } from '../utils-constants/sort.js';
+import { sortByPrice, sortByTime, sortByDay } from '../utils-constants/sort.js';
 import { render } from '../framework/render.js';
 
 export default class PagePresenter {
@@ -27,7 +27,7 @@ export default class PagePresenter {
   }
 
   init() {
-    this.#eventsListPoints = [...this.#pointsModel.points];
+    this.#eventsListPoints = [...this.#pointsModel.points].sort(sortByDay);
     this.#sourcedPoints = [...this.#pointsModel.points];
     this.#renderPage();
   }
@@ -60,6 +60,7 @@ export default class PagePresenter {
 
   #renderSorting() {
     this.#sorting = new Sorting({
+      checkedSortType: this.#defaultSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
     render(this.#sorting, this.#eventsListContainer);
@@ -82,14 +83,14 @@ export default class PagePresenter {
 
   #sortPoints(sortType) {
     switch (sortType) {
-      case SortType.TIME:
+      case 'time':
         this.#eventsListPoints.sort(sortByTime);
         break;
-      case SortType.PRICE:
+      case 'price':
         this.#eventsListPoints.sort(sortByPrice);
         break;
       default:
-        this.#eventsListPoints = [...this.#sourcedPoints];
+        this.#eventsListPoints = [...this.#sourcedPoints].sort(sortByDay);
     }
 
     this.#defaultSortType = sortType;
@@ -105,12 +106,13 @@ export default class PagePresenter {
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
-  #handleSortTypeChange = (sortType) => {
-    if (this.#defaultSortType === sortType) {
+  #handleSortTypeChange = (checkedSortType) => {
+    if (this.#defaultSortType === checkedSortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#defaultSortType = checkedSortType;
+    this.#sortPoints(checkedSortType);
     this.#clearPoints();
     this.#renderEventsList();
   };
