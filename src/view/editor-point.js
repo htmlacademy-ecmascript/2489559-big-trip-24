@@ -1,18 +1,37 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import { createOfferItemTemplate, createTypeGroupTemplate } from './editor-form-elements.js';
+import { createImageSection, createOfferItemTemplate, createTypeGroupTemplate } from './editor-form-elements.js';
 import { GROUP_TYPES } from '../utils-constants/constants.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { makeCapitalized } from '../utils-constants/utils.js';
+import { DateFormat, humanizePointDueDate } from '../utils-constants/date-time.js';
 
-const createEditorPointTemplate = (point, allOffers, pointDestination, allDestination) => {
-  const { basePrice, type } = point;
-  const typeName = type[0].toUpperCase() + type.slice(1, type.length);
-  const { name, description } = pointDestination;
+const createEditorPointTemplate = (point, allOffers, pointDestination, allDestinations) => {
+  const { basePrice, type, dateFrom, dateTo } = point;
+  const { name, description, pictures } = pointDestination;
+
+  const startTime = humanizePointDueDate(dateFrom, DateFormat.FULL_DATE_FORMAT);
+  const endTime = humanizePointDueDate(dateTo, DateFormat.FULL_DATE_FORMAT);
+
+  const typeName = makeCapitalized(type);
+  const imageSection = createImageSection(pictures);
+
   const createAllOffers = allOffers.offers
     .map((offer) => {
       const checkedClassName = point.offers.includes(offer.id) ? 'checked' : '';
-      return createOfferItemTemplate(allOffers.type, offer.title, offer.price, checkedClassName);
+      return createOfferItemTemplate(allOffers.type, offer.title, offer.price, offer.id, checkedClassName);
     }).join('');
 
-  const createDesinationTemplate = allDestination
+  const createSectionOffers = allOffers.offers.length > 0
+    ? `<section class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+        <div class="event__available-offers">
+          ${createAllOffers}
+        </div>
+      </section>
+    `
+    : '';
+
+  const createDesinationTemplate = allDestinations
     .map((item) => `<option value="${item.name}"></option>`).join('');
 
   const createTypeList = GROUP_TYPES
@@ -52,10 +71,10 @@ const createEditorPointTemplate = (point, allOffers, pointDestination, allDestin
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -73,17 +92,12 @@ const createEditorPointTemplate = (point, allOffers, pointDestination, allDestin
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            ${createAllOffers}
-          </div>
-        </section>
+        ${createSectionOffers}
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
+          ${imageSection}
         </section>
       </section>
     </form>
