@@ -4,7 +4,7 @@ import Sorting from '../view/sorting.js';
 import { SortType, PlugText } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils-constants/utils.js';
-import { sortByPrice, sortByTime, sortByDay } from '../utils-constants/sort.js';
+import { sortBy } from '../utils-constants/sort.js';
 import { render } from '../framework/render.js';
 
 export default class PagePresenter {
@@ -27,7 +27,7 @@ export default class PagePresenter {
   }
 
   init() {
-    this.#eventsListPoints = [...this.#pointsModel.points].sort(sortByDay);
+    this.#eventsListPoints = [...this.#pointsModel.points].sort(sortBy.Day);
     this.#sourcedPoints = [...this.#pointsModel.points];
     this.#renderPage();
   }
@@ -84,13 +84,13 @@ export default class PagePresenter {
   #sortPoints(sortType) {
     switch (sortType) {
       case 'time':
-        this.#eventsListPoints.sort(sortByTime);
+        this.#eventsListPoints.sort(sortBy.Time);
         break;
       case 'price':
-        this.#eventsListPoints.sort(sortByPrice);
+        this.#eventsListPoints.sort(sortBy.Price);
         break;
       default:
-        this.#eventsListPoints = [...this.#sourcedPoints].sort(sortByDay);
+        this.#eventsListPoints = [...this.#sourcedPoints].sort(sortBy.Day);
     }
 
     this.#defaultSortType = sortType;
