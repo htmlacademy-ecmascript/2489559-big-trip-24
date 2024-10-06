@@ -1,4 +1,6 @@
-const GROUP_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+import dayjs from 'dayjs';
+
+const GROUP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const ID_IMAGES = [1, 2, 3, 4, 5];
 
@@ -42,4 +44,15 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode, UserAction, UpdateType};
+const DEFAULT_POINT = {
+  id: 0,
+  basePrice: '0',
+  dateFrom: dayjs(new Date()).toISOString(),
+  dateTo: dayjs(new Date()).toISOString(),
+  destination: '0',
+  isFavorite: false,
+  offers: [],
+  type: GROUP_TYPES[5]
+};
+
+export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode, UserAction, UpdateType, DEFAULT_POINT};
