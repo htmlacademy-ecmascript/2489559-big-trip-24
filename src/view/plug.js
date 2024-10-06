@@ -1,17 +1,22 @@
 import AbstractView from '../framework/view/abstract-view';
+import { PlugText } from '../utils-constants/constants';
 
-const createPlugTemplate = (text) => `
-    <p class="trip-events__msg">${text}</p>
-`;
+const createPlugTemplate = (filterType) => {
+  const listEmptyValue = PlugText[filterType];
+  return (`
+  <p class="trip-events__msg">${listEmptyValue}</p>
+`);
+};
 
 export default class Plug extends AbstractView {
-  #text = null;
-  constructor(text) {
+  #filterType = null;
+
+  constructor({filterType}) {
     super();
-    this.#text = text;
+    this.#filterType = filterType;
   }
 
   get template() {
-    return createPlugTemplate(this.#text);
+    return createPlugTemplate(this.#filterType);
   }
 }

@@ -14,21 +14,20 @@ const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
-
-const PlugText = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  PRESENT: 'There are no present events now',
-  FUTURE: 'There are no future events now',
-  LOADING: 'Loading...',
-  LOADING_ERROR: 'Failed to load latest route information'
-};
-
 const FilterType = {
   EVERYTHING: 'Everything',
   PAST: 'Past',
   PRESENT: 'Present',
   FUTURE: 'Future',
+};
+
+const PlugText = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.LOADING]: 'Loading...',
+  [FilterType.LOADING_ERROR]: 'Failed to load latest route information'
 };
 
 const UserAction = {
