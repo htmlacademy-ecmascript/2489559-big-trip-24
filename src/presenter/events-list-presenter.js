@@ -1,10 +1,10 @@
 import EventsList from '../view/events-list.js';
 import Plug from '../view/plug.js';
 import Sorting from '../view/sorting.js';
-import { SortType, PlugText } from '../utils-constants/constants.js';
+import { SortType, PlugText, UpdateType, UserAction } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
 import { sortBy } from '../utils-constants/sort.js';
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 
 export default class PagePresenter {
   #eventsListContainer = null;
@@ -61,11 +61,6 @@ export default class PagePresenter {
     points.forEach((point) => this.#renderPoint(point));
   }
 
-  #clearPoints() {
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-  }
-
   #renderListEmpty() {
     render(this.#listEmpty, this.#eventsListContainer);
   }
@@ -93,25 +88,51 @@ export default class PagePresenter {
     this.#renderEventsList();
   }
 
+  #clearPage({resetSortType = false} = {}) {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+
+    remove(this.#sorting);
+    remove(this.#listEmpty);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+  }
+
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updateTask(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addTask(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deleteTask(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearPage();
+        this.#renderPage();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearPage({resetSortType: true});
+        this.#renderPage();
+        break;
+    }
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -120,7 +141,7 @@ export default class PagePresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearPoints();
-    this.#renderEventsList();
+    this.#clearPage();
+    this.#renderPage();
   };
 }
