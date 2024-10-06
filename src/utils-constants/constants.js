@@ -1,4 +1,6 @@
-const GROUP_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+import dayjs from 'dayjs';
+
+const GROUP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
 const ID_IMAGES = [1, 2, 3, 4, 5];
 
@@ -15,15 +17,6 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-const PlugText = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  PRESENT: 'There are no present events now',
-  FUTURE: 'There are no future events now',
-  LOADING: 'Loading...',
-  LOADING_ERROR: 'Failed to load latest route information'
-};
-
 const FilterType = {
   EVERYTHING: 'Everything',
   PAST: 'Past',
@@ -31,4 +24,36 @@ const FilterType = {
   FUTURE: 'Future',
 };
 
-export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode};
+const PlugText = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.LOADING]: 'Loading...',
+  [FilterType.LOADING_ERROR]: 'Failed to load latest route information'
+};
+
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const DEFAULT_POINT = {
+  id: 0,
+  basePrice: '0',
+  dateFrom: dayjs(new Date()).toISOString(),
+  dateTo: dayjs(new Date()).toISOString(),
+  destination: '0',
+  isFavorite: false,
+  offers: [],
+  type: GROUP_TYPES[5]
+};
+
+export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode, UserAction, UpdateType, DEFAULT_POINT};
