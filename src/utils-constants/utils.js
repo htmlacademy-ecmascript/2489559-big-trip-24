@@ -5,8 +5,6 @@ const getRandomElements = (items) => {
   return items.slice(startFrom, endTo);
 };
 
-const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
 const makeCapitalized = (type) => type[0].toUpperCase() + type.slice(1, type.length);
 
-export { getRandomElements, makeCapitalized, updateItem };
+export { getRandomElements, makeCapitalized };

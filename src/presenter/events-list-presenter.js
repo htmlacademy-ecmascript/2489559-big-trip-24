@@ -3,7 +3,6 @@ import Plug from '../view/plug.js';
 import Sorting from '../view/sorting.js';
 import { SortType, PlugText } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils-constants/utils.js';
 import { sortBy } from '../utils-constants/sort.js';
 import { render } from '../framework/render.js';
 
@@ -16,7 +15,7 @@ export default class PagePresenter {
   #sourcedPoints = [];
 
   #pointPresenters = new Map();
-  #defaultSortType = SortType.DAY;
+  #currentSortType = SortType.DAY;
 
   #eventsListComponent = new EventsList();
   #listEmpty = new Plug(PlugText.EVERYTHING);
@@ -24,6 +23,21 @@ export default class PagePresenter {
   constructor({eventsListContainer, pointsModel}) {
     this.#eventsListContainer = eventsListContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    switch (this.#currentSortType) {
+      case 'time':
+        [...this.#pointsModel.points].sort(sortBy.Time);
+        break;
+      case 'price':
+        [...this.#pointsModel.points].sort(sortBy.Price);
+        break;
+    }
+
+    return [...this.#pointsModel.points].sort(sortBy.Day);
   }
 
   init() {
@@ -36,17 +50,15 @@ export default class PagePresenter {
     const pointPresenter = new PointPresenter({
       eventsListComponent: this.#eventsListComponent.element,
       pointsModel: this.#pointsModel,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
     });
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
-  #renderPoints() {
-    for (let i = 0; i < this.#eventsListPoints.length; i++) {
-      this.#renderPoint(this.#eventsListPoints[i]);
-    }
+  #renderPoints(points) {
+    points.forEach((point) => this.#renderPoint(point));
   }
 
   #clearPoints() {
@@ -60,7 +72,7 @@ export default class PagePresenter {
 
   #renderSorting() {
     this.#sorting = new Sorting({
-      checkedSortType: this.#defaultSortType,
+      checkedSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
     render(this.#sorting, this.#eventsListContainer);
@@ -68,12 +80,12 @@ export default class PagePresenter {
 
   #renderEventsList() {
     render(this.#eventsListComponent, this.#eventsListContainer);
-    this.#renderPoints();
+    this.#renderPoints(this.points);
   }
 
   #renderPage() {
 
-    if (this.#eventsListPoints.length === 0) {
+    if (this.points.length === 0) {
       this.#renderListEmpty();
       return;
     }
@@ -81,38 +93,33 @@ export default class PagePresenter {
     this.#renderEventsList();
   }
 
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case 'time':
-        this.#eventsListPoints.sort(sortBy.Time);
-        break;
-      case 'price':
-        this.#eventsListPoints.sort(sortBy.Price);
-        break;
-      default:
-        this.#eventsListPoints = [...this.#sourcedPoints].sort(sortBy.Day);
-    }
-
-    this.#defaultSortType = sortType;
-  }
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedPoint) => {
-    this.#eventsListPoints = updateItem(this.#eventsListPoints, updatedPoint);
-    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
   };
 
-  #handleSortTypeChange = (checkedSortType) => {
-    if (this.#defaultSortType === checkedSortType) {
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#defaultSortType = checkedSortType;
-    this.#sortPoints(checkedSortType);
+    this.#currentSortType = sortType;
     this.#clearPoints();
     this.#renderEventsList();
   };
