@@ -16,6 +16,7 @@ const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
 };
+
 const FilterType = {
   EVERYTHING: 'Everything',
   PAST: 'Past',

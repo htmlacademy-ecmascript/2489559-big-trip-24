@@ -10,14 +10,12 @@ import { filter } from '../utils-constants/filter.js';
 
 export default class PagePresenter {
   #eventsListContainer = null;
+
   #pointsModel = null;
   #filterModel = null;
 
   #sorting = null;
   #listEmpty = null;
-
-  #eventsListPoints = [];
-  #sourcedPoints = [];
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
@@ -62,8 +60,6 @@ export default class PagePresenter {
   }
 
   init() {
-    this.#eventsListPoints = [...this.#pointsModel.points].sort(sortBy.Day);
-    this.#sourcedPoints = [...this.#pointsModel.points];
     this.#renderPage();
   }
 
@@ -138,7 +134,6 @@ export default class PagePresenter {
     }
   }
 
-
   #handleModeChange = () => {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
@@ -178,7 +173,6 @@ export default class PagePresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-
     this.#currentSortType = sortType;
     this.#clearPage();
     this.#renderPage();

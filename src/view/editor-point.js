@@ -4,6 +4,7 @@ import { makeCapitalized } from '../utils-constants/utils.js';
 import { DateFormat, humanizePointDueDate } from '../utils-constants/date-time.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -75,7 +76,7 @@ const createEditorPointTemplate = (state, allDestinations) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${typeName}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination !== undefined ? pointDestination.name : ''}" list="destination-list-1" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination !== undefined ? he.encode(pointDestination.name) : ''}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${createDesinationTemplate}
           </datalist>
@@ -194,7 +195,6 @@ export default class EditorPoint extends AbstractStatefulView {
         'time_24hr': true,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
-        maxDate: this._state.dateTo,
       }
     );
   }
@@ -227,6 +227,7 @@ export default class EditorPoint extends AbstractStatefulView {
     this._setState({
       dateFrom: userDate,
     });
+    this.#setDatepickerEnd();
   };
 
   #dateToChangeHandler = ([userDate]) => {
