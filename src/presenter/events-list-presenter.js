@@ -2,7 +2,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import EventsList from '../view/events-list.js';
 import Plug from '../view/plug.js';
 import Sorting from '../view/sorting.js';
-import { FilterType, SortType, UpdateType, UserAction } from '../utils-constants/constants.js';
+import { FilterType, SortType, UpdateType, UserAction, PlugText } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
 import { sortBy } from '../utils-constants/sort.js';
 import { render, remove } from '../framework/render.js';
@@ -16,11 +16,14 @@ export default class PagePresenter {
 
   #sorting = null;
   #listEmpty = null;
+  #loadingComponent = null;
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #loadingPlug = Object.keys(PlugText).find((item) => item === 'LOADING');
+  #isLoading = true;
 
   #eventsListComponent = new EventsList();
 
@@ -96,6 +99,13 @@ export default class PagePresenter {
     render(this.#listEmpty, this.#eventsListContainer);
   }
 
+  #renderLoading() {
+    this.#loadingComponent = new Plug({
+      filterType: this.#loadingPlug,
+    });
+    render(this.#loadingComponent, this.#eventsListContainer);
+  }
+
   #renderSorting() {
     this.#sorting = new Sorting({
       checkedSortType: this.#currentSortType,
@@ -111,6 +121,11 @@ export default class PagePresenter {
 
   #renderPage() {
 
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderListEmpty();
       return;
@@ -125,6 +140,8 @@ export default class PagePresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sorting);
+    remove(this.#loadingComponent);
+
     if (this.#listEmpty) {
       remove(this.#listEmpty);
     }
@@ -164,6 +181,11 @@ export default class PagePresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearPage({resetSortType: true});
+        this.#renderPage();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
         this.#renderPage();
         break;
     }

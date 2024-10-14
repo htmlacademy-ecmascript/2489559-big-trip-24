@@ -29,8 +29,8 @@ const PlugText = {
   [FilterType.PAST]: 'There are no past events now',
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.FUTURE]: 'There are no future events now',
-  [FilterType.LOADING]: 'Loading...',
-  [FilterType.LOADING_ERROR]: 'Failed to load latest route information'
+  LOADING: 'Loading...',
+  LOADING_ERROR: 'Failed to load latest route information'
 };
 
 const UserAction = {
@@ -43,6 +43,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 const DEFAULT_POINT = {

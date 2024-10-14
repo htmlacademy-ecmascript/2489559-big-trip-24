@@ -95,7 +95,7 @@ const createEditorPointTemplate = (state, allDestinations) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="10000" step="1" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -215,7 +215,10 @@ export default class EditorPoint extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditorPoint.parseStateToPoint(this._state));
+    if (this._state.dateTo > this._state.dateFrom) {
+      this.#handleFormSubmit(EditorPoint.parseStateToPoint(this._state));
+    }
+    this.element.querySelector('#event-end-time-1').setAttribute('style', 'color: red');
   };
 
   #editRollUpHandler = (evt) => {
@@ -275,6 +278,7 @@ export default class EditorPoint extends AbstractStatefulView {
       offers: checkedOffersById
     });
   };
+
 
   static parsePointToState(point, pointDestination, typeOffers) {
     return {
