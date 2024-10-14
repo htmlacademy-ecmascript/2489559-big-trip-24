@@ -1,5 +1,6 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../utils-constants/constants.js';
+import AdapterService from '../server/adapter.js';
 
 export default class PointsModel extends Observable {
   #points = [];
@@ -7,6 +8,7 @@ export default class PointsModel extends Observable {
   #offers = [];
 
   #pointsApiService = null;
+  #pointsAdapterService = new AdapterService();
 
   constructor({pointsApiService}) {
     super();
@@ -31,7 +33,7 @@ export default class PointsModel extends Observable {
       const offers = await this.#pointsApiService.offers;
       const destinations = await this.#pointsApiService.destinations;
 
-      this.#points = points.map(this.adaptToClient);
+      this.#points = points.map(this.#pointsAdapterService.adaptToClient);
       this.#offers = offers.map((offer) => offer);
       this.#destinations = destinations.map((destination) => destination);
 
@@ -40,6 +42,7 @@ export default class PointsModel extends Observable {
       this.#offers = [];
       this.#destinations = [];
     }
+
     this._notify(UpdateType.INIT);
   }
 
@@ -67,7 +70,7 @@ export default class PointsModel extends Observable {
 
     try {
       const response = await this.#pointsApiService.updatePoint(update);
-      const updatedPoint = this.adaptToClient(response);
+      const updatedPoint = this.#pointsAdapterService.adaptToClient(response);
       this.#points = [
         ...this.#points.slice(0, index),
         updatedPoint,
@@ -101,21 +104,5 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType);
-  }
-
-  #adaptToClient(point) {
-    const adaptedPoint = {...point,
-      basePrice: point['base_price'],
-      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
-      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
-      isFavorite: point['is_favorite'],
-    };
-
-    delete adaptedPoint['base_price'];
-    delete adaptedPoint['date_from'];
-    delete adaptedPoint['date_to'];
-    delete adaptedPoint['is_favorite'];
-
-    return adaptedPoint;
   }
 }
