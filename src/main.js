@@ -49,3 +49,7 @@ render(newPointButtonComponent, tripMainElement);
 
 filterPresenter.init();
 eventsListPresenter.init();
+pointsModel.init()
+  .finally(() => {
+    render(newPointButtonComponent, tripMainElement);
+  });
