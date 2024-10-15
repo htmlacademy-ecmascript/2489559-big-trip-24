@@ -262,7 +262,7 @@ export default class EditorPoint extends AbstractStatefulView {
     evt.preventDefault();
     const newPrice = evt.target.value;
     this._setState({
-      basePrice: newPrice
+      basePrice: parseInt(newPrice, 10)
     });
   };
 

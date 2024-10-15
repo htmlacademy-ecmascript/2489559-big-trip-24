@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 
 const GROUP_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
@@ -47,10 +46,9 @@ const UpdateType = {
 };
 
 const DEFAULT_POINT = {
-  id: 0,
   basePrice: '0',
-  dateFrom: dayjs(new Date()).toISOString(),
-  dateTo: dayjs(new Date()).toISOString(),
+  dateFrom: null,
+  dateTo: null,
   destination: '0',
   isFavorite: false,
   offers: [],
