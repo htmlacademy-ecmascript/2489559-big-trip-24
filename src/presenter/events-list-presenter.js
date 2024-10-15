@@ -160,12 +160,15 @@ export default class PagePresenter {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
         break;
       case UserAction.ADD_POINT:
         this.#pointsModel.addPoint(updateType, update);
+        this.#newPointPresenter.setSaving();
         break;
       case UserAction.DELETE_POINT:
         this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
         break;
     }
   };

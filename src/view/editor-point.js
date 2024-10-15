@@ -1,5 +1,5 @@
-import { createImageSection, createOfferItemTemplate, createTypeGroupTemplate } from './editor-form-elements.js';
-import { GROUP_TYPES, DEFAULT_POINT } from '../utils-constants/constants.js';
+import { createImageSection, createOfferItemTemplate, createTypeGroupTemplate, setDeleteButtonName } from './editor-form-elements.js';
+import { GROUP_TYPES } from '../utils-constants/constants.js';
 import { makeCapitalized } from '../utils-constants/utils.js';
 import { DateFormat, humanizePointDueDate } from '../utils-constants/date-time.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
@@ -11,7 +11,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditorPointTemplate = (state, allDestinations) => {
-  const { id, basePrice, type, dateFrom, dateTo, offers, typeOffers, destination } = state;
+  const { id, basePrice, type, dateFrom, dateTo, offers, typeOffers, destination, isDeleting, isDisabled, isSaving } = state;
 
   const startTime = humanizePointDueDate(dateFrom, DateFormat.FULL_DATE_FORMAT);
   const endTime = humanizePointDueDate(dateTo, DateFormat.FULL_DATE_FORMAT);
@@ -25,6 +25,19 @@ const createEditorPointTemplate = (state, allDestinations) => {
       const checkedClassName = offers.includes(offer.id) ? 'checked' : '';
       return createOfferItemTemplate(type, offer.title, offer.price, offer.id, checkedClassName);
     }).join('');
+
+  const createTypeList = GROUP_TYPES
+    .map((group) => {
+      const checkedClassName = group === typeName ? 'checked' : '';
+      const groupName = makeCapitalized(group);
+      return createTypeGroupTemplate(groupName, checkedClassName);
+    }).join('');
+
+
+  const createButtonRollUp = id
+    ? `<button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>` : '';
 
   const createSectionOffers = typeOffers !== undefined && typeOffers.offers.length > 0
     ? `<section class="event__section  event__section--offers">
@@ -46,13 +59,6 @@ const createEditorPointTemplate = (state, allDestinations) => {
   const createDesinationTemplate = allDestinations
     .map((item) => `<option value="${item.name}"></option>`).join('');
 
-  const createTypeList = GROUP_TYPES
-    .map((group) => {
-      const checkedClassName = group === typeName ? 'checked' : '';
-      const groupName = makeCapitalized(group);
-      return createTypeGroupTemplate(groupName, checkedClassName);
-    }).join('');
-
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -62,7 +68,7 @@ const createEditorPointTemplate = (state, allDestinations) => {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
@@ -76,7 +82,7 @@ const createEditorPointTemplate = (state, allDestinations) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${typeName}
           </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination !== undefined ? he.encode(pointDestination.name) : ''}" list="destination-list-1" required>
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination !== undefined ? he.encode(pointDestination.name) : ''}" list="destination-list-1" required  ${isDisabled ? 'disabled' : ''}>
           <datalist id="destination-list-1">
             ${createDesinationTemplate}
           </datalist>
@@ -84,10 +90,10 @@ const createEditorPointTemplate = (state, allDestinations) => {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startTime}" ${isDisabled ? 'disabled' : ''}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endTime}" ${isDisabled ? 'disabled' : ''}>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -95,14 +101,12 @@ const createEditorPointTemplate = (state, allDestinations) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="10000" step="1" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" max="10000" step="1" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${id === DEFAULT_POINT.id ? 'Cancel' : 'Delete'}</button>
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSaving ? 'disabled' : ''}>${isSaving ? 'Saving' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDeleting ? 'disabled' : ''}>${setDeleteButtonName(id, isDeleting)}</button>
+        ${createButtonRollUp}
       </header>
       <section class="event__details">
         ${createSectionOffers}
@@ -165,7 +169,7 @@ export default class EditorPoint extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editRollUpHandler);
+      ?.addEventListener('click', this.#editRollUpHandler);
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#typeListChangeHandler);
@@ -284,7 +288,10 @@ export default class EditorPoint extends AbstractStatefulView {
     return {
       ...point,
       destination: pointDestination,
-      typeOffers
+      typeOffers,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
     };
   }
 
@@ -294,6 +301,10 @@ export default class EditorPoint extends AbstractStatefulView {
     if (point.typeOffers) {
       delete point.typeOffers;
     }
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
 
     return point;
   }
