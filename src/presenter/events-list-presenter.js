@@ -2,11 +2,12 @@ import NewPointPresenter from './new-point-presenter.js';
 import EventsList from '../view/events-list.js';
 import Plug from '../view/plug.js';
 import Sorting from '../view/sorting.js';
-import { FilterType, SortType, UpdateType, UserAction, PlugText } from '../utils-constants/constants.js';
+import { FilterType, SortType, UpdateType, UserAction, PlugText, TimeLimit } from '../utils-constants/constants.js';
 import PointPresenter from './point-presenter.js';
 import { sortBy } from '../utils-constants/sort.js';
 import { render, remove } from '../framework/render.js';
 import { filter } from '../utils-constants/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
 export default class PagePresenter {
   #eventsListContainer = null;
@@ -24,6 +25,12 @@ export default class PagePresenter {
   #filterType = FilterType.EVERYTHING;
   #loadingPlug = Object.keys(PlugText).find((item) => item === 'LOADING');
   #isLoading = true;
+
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
+
 
   #eventsListComponent = new EventsList();
 
@@ -157,6 +164,7 @@ export default class PagePresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setSaving();
@@ -183,6 +191,7 @@ export default class PagePresenter {
         }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

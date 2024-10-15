@@ -55,4 +55,9 @@ const DEFAULT_POINT = {
   type: GROUP_TYPES[5]
 };
 
-export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode, UserAction, UpdateType, DEFAULT_POINT};
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { GROUP_TYPES, SortType, ID_IMAGES, PlugText, FilterType, Mode, UserAction, UpdateType, DEFAULT_POINT, TimeLimit};
