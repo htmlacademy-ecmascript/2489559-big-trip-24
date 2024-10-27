@@ -1,6 +1,6 @@
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../utils-constants/constants.js';
-import AdapterService from '../server/adapter.js';
+import AdapterService from '../server/adapter-service.js';
 
 export default class PointsModel extends Observable {
   #points = [];

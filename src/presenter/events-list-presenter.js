@@ -9,7 +9,7 @@ import { render, remove } from '../framework/render.js';
 import { filter } from '../utils-constants/filter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 
-export default class PagePresenter {
+export default class EventsListPresenter {
   #eventsListContainer = null;
 
   #pointsModel = null;

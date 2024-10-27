@@ -1,9 +1,9 @@
 import EventsListPresenter from './presenter/events-list-presenter.js';
-import TripInfoView from './view/trip-info.js';
-import PointsModel from './model/response-model.js';
+import TripInfoView from './view/trip-info-view.js';
+import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import NewPointButton from './view/new-point-button-element.js';
+import NewPointButton from './view/new-point-button.js';
 import PointsApiService from './server/points-api-server.js';
 
 const AUTHORIZATHION = 'Basic er883jdzbdw';
