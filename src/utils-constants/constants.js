@@ -18,16 +18,16 @@ const Mode = {
 
 const FilterType = {
   EVERYTHING: 'Everything',
-  PAST: 'Past',
-  PRESENT: 'Present',
   FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past',
 };
 
 const PlugText = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
-  [FilterType.PAST]: 'There are no past events now',
-  [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.FUTURE]: 'There are no future events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.PAST]: 'There are no past events now',
   LOADING: 'Loading...',
   LOADING_ERROR: 'Failed to load latest route information'
 };

@@ -1,5 +1,5 @@
 import ApiService from '../framework/api-service.js';
-import AdapterService from './adapter.js';
+import AdapterService from './adapter-service.js';
 
 const Method = {
   GET: 'GET',
