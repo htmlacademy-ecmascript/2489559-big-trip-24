@@ -20,10 +20,15 @@ const pointsModel = new PointsModel({
 });
 const filterModel = new FilterModel();
 
+const newPointButtonComponent = new NewPointButton({
+  onClick: handleNewPointButtonClick
+});
+
 const eventsListPresenter = new EventsListPresenter({
   eventsListContainer: tripEventsSectionElement,
   pointsModel,
   filterModel,
+  newPointButtonComponent,
   onNewPointDestroy: handleNewPointFormClose,
 });
 const filterPresenter = new FilterPresenter({
@@ -31,9 +36,7 @@ const filterPresenter = new FilterPresenter({
   filterModel,
   pointsModel
 });
-const newPointButtonComponent = new NewPointButton({
-  onClick: handleNewPointButtonClick
-});
+
 
 function handleNewPointFormClose() {
   newPointButtonComponent.element.disabled = false;

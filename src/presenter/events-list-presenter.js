@@ -18,12 +18,15 @@ export default class EventsListPresenter {
   #sorting = null;
   #listEmpty = null;
   #loadingComponent = null;
+  #loadingErrorComponent = null;
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
+  #newPointButton = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #loadingPlug = Object.keys(PlugText).find((item) => item === 'LOADING');
+  #loadingErrorPlug = Object.keys(PlugText).find((item) => item === 'LOADING_ERROR');
   #isLoading = true;
 
   #uiBlocker = new UiBlocker({
@@ -34,10 +37,11 @@ export default class EventsListPresenter {
 
   #eventsListComponent = new EventsList();
 
-  constructor({eventsListContainer, pointsModel, filterModel, onNewPointDestroy}) {
+  constructor({eventsListContainer, pointsModel, filterModel, onNewPointDestroy, newPointButtonComponent}) {
     this.#eventsListContainer = eventsListContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#newPointButton = newPointButtonComponent.element;
 
     this.#newPointPresenter = new NewPointPresenter({
       eventListContainer: this.#eventsListComponent.element,
@@ -69,19 +73,22 @@ export default class EventsListPresenter {
     return filteredPoint;
   }
 
+  get error() {
+    return this.#pointsModel.error;
+  }
+
   init() {
     this.#renderPage();
   }
 
   createPoint() {
-    if (this.#listEmpty) {
-      remove(this.#listEmpty);
-    }
-
     this.#currentSortType = SortType.DAY;
     this.#filterType = FilterType.EVERYTHING;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+    if (this.#listEmpty) {
+      remove(this.#listEmpty);
+    }
   }
 
   #renderPoint(point) {
@@ -113,6 +120,14 @@ export default class EventsListPresenter {
     render(this.#loadingComponent, this.#eventsListContainer);
   }
 
+  #renderLoadingError() {
+    this.#loadingErrorComponent = new Plug({
+      filterType: this.#loadingErrorPlug,
+    });
+    this.#newPointButton.disabled = true;
+    render(this.#loadingErrorComponent, this.#eventsListContainer);
+  }
+
   #renderSorting() {
     this.#sorting = new Sorting({
       checkedSortType: this.#currentSortType,
@@ -127,6 +142,11 @@ export default class EventsListPresenter {
   }
 
   #renderPage() {
+
+    if (this.error) {
+      this.#renderLoadingError();
+      return;
+    }
 
     if (this.#isLoading) {
       this.#renderLoading();
