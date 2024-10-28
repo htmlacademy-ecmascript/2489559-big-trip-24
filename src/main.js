@@ -6,7 +6,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButton from './view/new-point-button.js';
 import PointsApiService from './server/points-api-server.js';
 
-const AUTHORIZATHION = 'Basic er883jdzbdw';
+const AUTHORIZATION = 'Basic er883jdzbd';
 const END_POINT = 'https://24.objects.htmlacademy.pro/big-trip';
 
 import { render, RenderPosition } from './framework/render.js';
@@ -16,7 +16,7 @@ const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filter
 const tripEventsSectionElement = document.querySelector('.trip-events');
 
 const pointsModel = new PointsModel({
-  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATHION)
+  pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
 });
 const filterModel = new FilterModel();
 
